@@ -1,6 +1,6 @@
 "use client";
 import { useAtom } from "jotai";
-import { records as atomRecords, DataFrame } from "../records";
+import { records as atomRecords, DataFrame } from "../../records";
 import { useEffect, useRef, useState } from "react";
 import { setup_threejs } from "./setup_threejs";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";

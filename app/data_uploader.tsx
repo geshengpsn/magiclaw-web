@@ -45,7 +45,7 @@ export default function DataUploader() {
                                 return (
                                     <tr key={index} className="hover cursor-pointer" onClick={
                                         () => {
-                                            route.push(`/${record.uuid}`)
+                                            route.push(`/editor/${record.uuid}`)
                                         }
                                     }>
                                         <th>{index + 1}</th>
