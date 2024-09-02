@@ -1,31 +1,19 @@
-import { signIn, signOut } from "@/auth"
-import { auth } from "../auth"
-import DataUploader from "./data_uploader"
 export default async function Home() {
-  const session = await auth();
-  
   return (
     <main className="">
-      {/* <header className="navbar justify-between items-center p-8">
-        <h1 className="text-4xl font-bold">MagiClaw</h1>
-        {
-          session ? (
-            <div className="flex items-center space-x-4">
-              <button className="btn btn-circle">
-                <img tabIndex={0} src={session.user?.image as string} className="w-12 h-12 rounded-full" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <button className="btn btn-outline" onClick={async () => {
-                "use server"
-                await signIn("github")
-              }}>Sign In with GitHub</button>
-            </div>
-          )
-        }
-      </header> */}
-      <DataUploader />
+      {/* <DataUploader /> */}
+      <div className="hero min-h-screen">
+        <div className="hero-content text-center">
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold">Hello there</h1>
+            <p className="py-6">
+              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+              quasi. In deleniti eaque aut repudiandae et a id nisi.
+            </p>
+            <button className="btn btn-primary">Get Started</button>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

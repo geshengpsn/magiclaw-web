@@ -4,7 +4,9 @@ import "./globals.css";
 import { Provider } from 'jotai'
 import { auth } from "../auth"
 import { signIn, signOut } from "@/auth"
+import Header from "@/app/header"
 import Image from "next/image"
+import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,40 +22,9 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
-      <body className={inter.className + " max-w-screen-xl m-auto"}>
+      <body className={inter.className + " max-w-screen-xl m-auto px-4"}>
         <Provider>
-          <header className="flex justify-between items-center py-8">
-            <h1 className="text-4xl font-bold">MagiClaw</h1>
-            {
-              session ? (
-                <div className="flex items-center space-x-4">
-                  <button className="btn btn-circle">
-                    <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="rounded-full w-auto h-auto" width={48} height={48} />
-                  </button>
-                  <div className="flex items-center space-x-4">
-                    <form
-                      action={async () => {
-                        "use server"
-                        await signOut()
-                      }}
-                    >
-                      <button type="submit" className="btn btn-outline">Sign Out</button>
-                    </form>
-                  </div>
-                </div>
-
-              ) : (
-                <div className="flex items-center space-x-4">
-                  <form action={async () => {
-                    "use server"
-                    await signIn("github")
-                  }}>
-                    <button className="btn btn-outline">Sign In with GitHub</button>
-                  </form>
-                </div>
-              )
-            }
-          </header>
+          <Header session={session} />
           {children}
         </Provider>
       </body>
