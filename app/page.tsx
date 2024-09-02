@@ -1,19 +1,9 @@
 export default async function Home() {
   return (
-    <main className="">
+    <main className=" text-center ">
       {/* <DataUploader /> */}
-      <div className="hero min-h-screen">
-        <div className="hero-content text-center">
-          <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Hello there</h1>
-            <p className="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-              quasi. In deleniti eaque aut repudiandae et a id nisi.
-            </p>
-            <button className="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-      </div>
+      <h1 className=" text-8xl font-bold pt-20 pb-8 bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text">MagiClaw</h1>
+      <p className="text-3xl font-medium" > Next Gen Universal Action Embodiment Interface </p>
     </main>
   );
 }

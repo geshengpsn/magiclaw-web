@@ -10,9 +10,9 @@ export default function Header({ session }: { session: Session | null }) {
     return (
         <>
             <header className="sticky top-0 flex justify-between items-center py-8">
-                <a className="text-4xl font-bold btn btn-ghost" href="/" >MagiClaw</a>
+                <a className="text-xl btn btn-ghost" href="/" >MagiClaw</a>
                 <div className="flex space-x-4">
-                    <Link className="btn btn-ghost" target="_blank" href="">Docs</Link>
+                    <Link className="btn btn-ghost" target="_blank" href="https://magiclaw-nextra-docs.vercel.app/">Docs</Link>
                     {
                         session ? (
                             <div className="flex items-center space-x-4">
