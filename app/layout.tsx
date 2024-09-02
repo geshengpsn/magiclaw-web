@@ -28,15 +28,28 @@ export default async function RootLayout({
               session ? (
                 <div className="flex items-center space-x-4">
                   <button className="btn btn-circle">
-                    <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="w-12 h-12 rounded-full" />
+                    <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="rounded-full w-auto h-auto" width={48} height={48} />
                   </button>
+                  <div className="flex items-center space-x-4">
+                    <form
+                      action={async () => {
+                        "use server"
+                        await signOut()
+                      }}
+                    >
+                      <button type="submit" className="btn btn-outline">Sign Out</button>
+                    </form>
+                  </div>
                 </div>
+
               ) : (
                 <div className="flex items-center space-x-4">
-                  <button className="btn btn-outline" onClick={async () => {
+                  <form action={async () => {
                     "use server"
                     await signIn("github")
-                  }}>Sign In with GitHub</button>
+                  }}>
+                    <button className="btn btn-outline">Sign In with GitHub</button>
+                  </form>
                 </div>
               )
             }
