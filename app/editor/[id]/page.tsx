@@ -6,6 +6,7 @@ import { setup_threejs } from "./setup_threejs";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import theme from "daisyui/src/theming/themes"
 import RGB from "./rgb";
+
 class TimeBar {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D | null;

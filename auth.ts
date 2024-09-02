@@ -7,4 +7,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     clientSecret: process.env.AUTH_GITHUB_SECRET,
     // redirectProxyUrl: process.env.AUTH_REDIRECT_PROXY_URL,
   })],
+  secret: process.env.AUTH_SECRET,
 })
