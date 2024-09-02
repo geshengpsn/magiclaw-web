@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import { records as atomRecords, DataFrame } from "../records";
 import { useEffect, useRef, useState } from "react";
 import { setup_threejs } from "./setup_threejs";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import theme from "daisyui/src/theming/themes"
 import RGB from "./rgb";
 class TimeBar {
@@ -111,7 +111,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
 
 
-    }, []);
+    }, [records, params.id]);
 
     const requestId = useRef<number>();
     useEffect(() => {
@@ -146,7 +146,7 @@ export default function Page({ params }: { params: { id: string } }) {
             setPlaying(false);
             setTime(0);
         }
-    }, [time]);
+    }, [time, maxTime]);
 
     const time_line_canvas = useRef<HTMLCanvasElement>(null);
     useEffect(() => {
@@ -173,7 +173,7 @@ export default function Page({ params }: { params: { id: string } }) {
             ctx.lineTo(time / maxTime * width, height);
             ctx.stroke();
         }
-    }, [time]);
+    }, [time, maxTime]);
 
     return (
         <div className="space-y-4">

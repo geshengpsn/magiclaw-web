@@ -4,6 +4,7 @@ import "./globals.css";
 import { Provider } from 'jotai'
 import { auth } from "../auth"
 import { signIn, signOut } from "@/auth"
+import Image from "next/image"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,7 +28,7 @@ export default async function RootLayout({
               session ? (
                 <div className="flex items-center space-x-4">
                   <button className="btn btn-circle">
-                    <img tabIndex={0} src={session.user?.image as string} className="w-12 h-12 rounded-full" />
+                    <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="w-12 h-12 rounded-full" />
                   </button>
                 </div>
               ) : (
