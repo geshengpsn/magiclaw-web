@@ -2,7 +2,7 @@
 import { useAtom } from "jotai";
 import { records as atomRecords, DataFrame } from "../../records";
 import { useEffect, useRef, useState } from "react";
-import { setup_threejs } from "../../data/setup_threejs";
+import { setup_threejs } from "../../dataset/setup_threejs";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import theme from "daisyui/src/theming/themes"
 import RGB from "./rgb";

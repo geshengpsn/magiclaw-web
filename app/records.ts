@@ -1,94 +1,103 @@
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { Matrix4 } from 'three';
+import JSZip from 'jszip';
+import { Matrix4 } from "three";
 import { v4 as uuidv4 } from 'uuid';
+
 
 export interface DataFrame<Data> {
     data: Data;
     time: number;
 }
 
-async function processData<Data>(entry: FileSystemFileHandle, callback: (raw: string[]) => Data): Promise<DataFrame<Data>[]> {
-    return entry.getFile().then(file => file.text()).then(text => {
-        let lines = text.split("\n");
-        lines.splice(0, 1);
-        let time_line: DataFrame<Data>[] = [];
-        for (const line of lines) {
-            let [time, ...rest] = line.split(",");
-            let t = parseFloat(time);
-            if (isNaN(t)) {
-                continue
-            }
-            time_line.push({
-                data: callback(rest),
-                time: t
-            });
+function stringToData<Data>(text: string, callback: (raw: string[]) => Data): DataFrame<Data>[] {
+    let lines = text.split("\n");
+    lines.splice(0, 1);
+    let time_line: DataFrame<Data>[] = [];
+    for (const line of lines) {
+        let [time, ...rest] = line.split(",");
+        let t = parseFloat(time);
+        if (isNaN(t)) {
+            continue
         }
-        return time_line;
-    });
+        time_line.push({
+            data: callback(rest),
+            time: t
+        });
+    }
+    return time_line;
+}
+
+async function processData<Data>(entry: FileSystemFileHandle, callback: (raw: string[]) => Data): Promise<DataFrame<Data>[]> {
+    return entry.getFile().then(file => file.text()).then(text => stringToData(text, callback));
 }
 
 export class Record {
     uuid: string = uuidv4();
-    dir: FileSystemDirectoryHandle;
-    angle: DataFrame<number>[] | undefined;
-    r_force: DataFrame<number[]>[] | undefined;
-    l_force: DataFrame<number[]>[] | undefined;
-    pose: DataFrame<Matrix4>[] | undefined;
-    depth: FileSystemDirectoryHandle | undefined;
-    rgb: string | undefined;
-    max_time: number = 0;
+    file: FileSystemFileHandle;
+    zip?: JSZip;
+    angle?: DataFrame<number>[];
+    r_force?: DataFrame<number[]>[];
+    l_force?: DataFrame<number[]>[];
+    pose?: DataFrame<Matrix4>[];
+    depth?: Uint16Array[];
+    rgb?: Blob;
+
+    // max_time: number = 0;
     clips: {
         start: number;
         end: number;
         description: string;
     }[] = [];
 
-    constructor(dir: FileSystemDirectoryHandle) {
-        this.dir = dir;
+    constructor(zipfile: FileSystemFileHandle) {
+        this.file = zipfile;
     }
 
-    async init() {
-        for await (let entry of this.dir.values()) {
-            let max_time = 0;
-            if (entry.kind === "file") {
-                if (entry.name === "AngleData.csv") {
-                    this.angle = await processData(entry, (raw) => parseFloat(raw[0]));
-                    if (this.angle.length > 0 && this.angle[this.angle.length - 1].time > max_time) {
-                        max_time = this.angle[this.angle.length - 1].time;
-                    }
-                } else if (entry.name === "R_ForceData.csv") {
-                    this.r_force = await processData(entry, (raw) => raw.map((v) => parseFloat(v)));
-                    if (this.r_force.length > 0 && this.r_force[this.r_force.length - 1].time > max_time) {
-                        max_time = this.r_force[this.r_force.length - 1].time;
-                    }
-                } else if (entry.name === "L_ForceData.csv") {
-                    this.l_force = await processData(entry, (raw) => raw.map((v) => parseFloat(v)));
-                    if (this.l_force.length > 0 && this.l_force[this.l_force.length - 1].time > max_time) {
-                        max_time = this.l_force[this.l_force.length - 1].time;
-                    }
-                } else if (entry.name === "PoseData.csv") {
-                    this.pose = await processData(entry, (raw) =>
-                        new Matrix4().fromArray(raw.map((v) => parseFloat(v))));
-                    if (this.pose.length > 0 && this.pose[this.pose.length - 1].time > max_time) {
-                        max_time = this.pose[this.pose.length - 1].time;
-                    }
-                } else if (entry.name.endsWith("RGB.mp4")) {
-                    this.rgb = URL.createObjectURL(await entry.getFile());
-                }
-                this.max_time = max_time;
-            } else if (entry.kind === "directory" && entry.name.endsWith("Depth")) {
-                this.depth = entry;
+    async decompress() {
+        let file = await this.file.getFile();
+        let zip = await JSZip.loadAsync(file);
+        this.zip = zip;
+
+        let prefix = this.file.name.split(".")[0] + "/";
+        // console.log(prefix);
+        this.rgb = await zip.file(prefix + "_RGB.mp4")?.async("blob");
+
+        let f = zip.file(prefix + "L_ForceData.csv");
+        if (f) this.l_force = stringToData(await f.async("text"), (raw) => raw.map((v) => parseFloat(v)));
+
+        f = zip.file(prefix + "R_ForceData.csv");
+        if (f) this.r_force = stringToData(await f.async("text"), (raw) => raw.map((v) => parseFloat(v)));
+
+        f = zip.file(prefix + "AngleData.csv");
+        if (f) this.angle = stringToData(await f.async("text"), (raw) => parseFloat(raw[0]));
+
+        f = zip.file(prefix + "PoseData.csv");
+        if (f) this.pose = stringToData(await f.async("text"), (raw) => new Matrix4().fromArray(raw.map((v) => parseFloat(v))));
+
+        let dir = zip.folder(prefix + "_Depth");
+        if (dir) {
+            // sort files by time
+            let files: { file: JSZip.JSZipObject, time: number }[] = [];
+            dir.forEach((path, f) => {
+                let end = path.split("_")[1];
+                let time = parseFloat(end.slice(0, -4));
+                files.push({ file: f, time: time });
+            })
+            files.sort((a, b) => {
+                return a.time - b.time;
+            });
+            let depth: Uint16Array[] = [];
+            for (let i = 0; i < files.length; i++) {
+                let data = new Uint16Array(await files[i].file.async("arraybuffer"));
+                depth.push(data);
             }
+            this.depth = depth;
         }
     }
 
-    get discription() {
-        return this.dir.name.slice(16);
-    }
-
     get create_time() {
-        return new Date(`${this.dir.name.slice(0, 4)}/${this.dir.name.slice(4, 6)}/${this.dir.name.slice(6, 8)} ${this.dir.name.slice(9, 11)}:${this.dir.name.slice(11, 13)}:${this.dir.name.slice(13, 15)}`);
+        return new Date(`${this.file.name.slice(0, 4)}/${this.file.name.slice(4, 6)}/${this.file.name.slice(6, 8)} ${this.file.name.slice(9, 11)}:${this.file.name.slice(11, 13)}:${this.file.name.slice(13, 15)}`);
     }
 
     add_clip(start: number, end: number, description: string) {

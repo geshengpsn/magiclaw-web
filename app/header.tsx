@@ -19,7 +19,8 @@ export default function Header({ session }: { session: Session | null }) {
                                 {/* <button className="btn btn-outline" onClick={()=>{
                                     route.push("/data")
                                 }}>Data Dashboard</button> */}
-                                <Link className="btn btn-outline" href="/data">Data Dashboard</Link>
+                                <Link className="btn btn-ghost" href="/dataset">DataSet</Link>
+                                <Link className="btn btn-ghost" href="https://magiclaw-data.vercel.app/" target="_blank">Visualization</Link>
                                 <label className="btn btn-circle" htmlFor="my-drawer">
                                     <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="rounded-full w-auto h-auto" width={48} height={48} />
                                 </label>

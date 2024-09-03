@@ -11,18 +11,19 @@
   "dependencies": {
     "@markdoc/markdoc": "^0.4.0",
     "jotai": "^2.9.3",
+    "jszip": "^3.10.1",
     "next": "14.2.6",
     "next-auth": "^5.0.0-beta.20",
     "react": "^18",
     "react-dom": "^18",
-    "three": "^0.167.1",
+    "three": "0.168.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/three": "^0.167.2",
+    "@types/three": "0.168.0",
     "@types/uuid": "^10.0.0",
     "@types/wicg-file-system-access": "^2023.10.5",
     "daisyui": "^4.12.10",
