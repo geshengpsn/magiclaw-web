@@ -1,9 +1,9 @@
 "use client";
-
-import JSZip from "jszip";
-import { Record } from "../records";
-
+import { Record } from "./records";
+import { useAtom } from "jotai";
+import { records as recordsAtom } from "./records";
 export default function Data() {
+    const [records, setRecords] = useAtom(recordsAtom);
     return (
         <div className=" space-y-4">
             <h1 className=" font-bold text-5xl">My DataSet</h1>
@@ -11,7 +11,6 @@ export default function Data() {
             <div className="flex">
                 <div className="flex-1"></div>
                 <button className="btn btn-primary" onClick={() => {
-                    // showDirectoryPicker
                     showOpenFilePicker({
                         multiple: true,
                         types: [{
@@ -27,7 +26,9 @@ export default function Data() {
                             return record;
                         }))
                     }).then((records) => {
-                        console.log(records);
+                        setRecords((old_records) => {
+                            return [...old_records, ...records];
+                        });
                     })
                 }}>Upload Data</button>
             </div>
@@ -39,32 +40,39 @@ export default function Data() {
                         <tr>
                             <th></th>
                             <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
+                            <th>RGB Size</th>
+                            <th>Depth Size</th>
+                            <th>Pose</th>
+                            <th>Left Finger Force</th>
+                            <th>Right Finger Force</th>
+                            <th>Angle</th>
+                            <th>Clips</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {/* row 1 */}
-                        <tr className="hover">
-                            <th>1</th>
-                            <td>Cy Ganderton</td>
-                            <td>Quality Control Specialist</td>
-                            <td>Blue</td>
-                        </tr>
-                        {/* row 2 */}
-                        <tr className="hover">
-                            <th>2</th>
-                            <td>Hart Hagerty</td>
-                            <td>Desktop Support Technician</td>
-                            <td>Purple</td>
-                        </tr>
-                        {/* row 3 */}
-                        <tr className="hover">
-                            <th>3</th>
-                            <td>Brice Swyre</td>
-                            <td>Tax Accountant</td>
-                            <td>Red</td>
-                        </tr>
+                        {
+                            records.map((record, i) => {
+                                return (
+                                    <tr key={record.uuid} className="hover">
+                                        <th>{i + 1}</th>
+                                        <td>{record.file.name}</td>
+                                        <td>{(record.rgb!.size / 1000000).toFixed(1)}MB</td>
+                                        <td>{(record.depth!.length * 256 * 192 * 2 / 1000000).toFixed(1)} MB</td>
+                                        <td>{record.pose?.length}</td>
+                                        <td>{record.l_force?.length}</td>
+                                        <td>{record.r_force?.length}</td>
+                                        <td>{record.angle?.length}</td>
+                                        <td>{record.clips.length}</td>
+                                        <th>
+                                            <button className="btn btn-ghost underline underline-offset-2">
+                                                view & edit
+                                            </button>
+                                        </th>
+                                    </tr>
+                                )
+                            })
+                        }
                     </tbody>
                 </table>
             </div>

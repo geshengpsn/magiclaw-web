@@ -1,5 +1,4 @@
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import JSZip from 'jszip';
 import { Matrix4 } from "three";
 import { v4 as uuidv4 } from 'uuid';
@@ -109,4 +108,4 @@ export class Record {
     }
 }
 
-export const records = atom<Map<string, Record>>(new Map());
+export const records = atom<Record[]>([]);
