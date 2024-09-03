@@ -2,11 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from 'jotai'
-import { auth } from "../auth"
-import { signIn, signOut } from "@/auth"
-import Header from "@/app/header"
-import Image from "next/image"
-import Link from "next/link";
+import { SessionProvider } from "next-auth/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,12 +15,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en">
-      <body className={inter.className + " max-w-screen-xl m-auto px-4"}>
+      <body className={inter.className}>
         <Provider>
-          <Header session={session} />
+          {/* <Header session={session} /> */}
           {children}
         </Provider>
       </body>

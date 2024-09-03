@@ -1,4 +1,5 @@
 import { AxesHelper, Color, DirectionalLight, GridHelper, PerspectiveCamera, Scene, Vector3, WebGLRenderer, PCFSoftShadowMap } from 'three';
+import theme from 'daisyui/src/theming/themes';
 
 export interface Renderer {
     camera: PerspectiveCamera;
@@ -71,14 +72,14 @@ export function setup_threejs(canvas: HTMLCanvasElement, width: number, height: 
         requestAnimationFrame(render);
         renderer.render(scene, camera);
     }
-    // const onWindowResize = function () {
-    //     const width = window.innerWidth;
-    //     const height = window.innerHeight;
-    //     camera.aspect = width / height;
-    //     camera.updateProjectionMatrix();
-    //     renderer.setSize(width, height);
-    // }
-    // window.addEventListener('resize', onWindowResize);
+    const onWindowResize = function () {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    }
+    window.addEventListener('resize', onWindowResize);
     render()
     return { scene, camera, renderer, canvas };
 }

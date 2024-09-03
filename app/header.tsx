@@ -9,14 +9,17 @@ export default function Header({ session }: { session: Session | null }) {
     const route = useRouter();
     return (
         <>
-            <header className="sticky top-0 flex justify-between items-center py-8">
-                <a className="text-xl btn btn-ghost" href="/" >MagiClaw</a>
+            <header className="sticky top-0 flex justify-between items-center py-6 px-4 border-b-2 border-neutral">
+                <Link className="text-xl btn btn-ghost" href="/" >MagiClaw</Link>
                 <div className="flex space-x-4">
                     <Link className="btn btn-ghost" target="_blank" href="https://magiclaw-nextra-docs.vercel.app/">Docs</Link>
                     {
                         session ? (
                             <div className="flex items-center space-x-4">
-                                <a className="btn btn-outline">Upload Data</a>
+                                {/* <button className="btn btn-outline" onClick={()=>{
+                                    route.push("/data")
+                                }}>Data Dashboard</button> */}
+                                <Link className="btn btn-outline" href="/data">Data Dashboard</Link>
                                 <label className="btn btn-circle" htmlFor="my-drawer">
                                     <Image alt="avatar" tabIndex={0} src={session.user?.image as string} className="rounded-full w-auto h-auto" width={48} height={48} />
                                 </label>
