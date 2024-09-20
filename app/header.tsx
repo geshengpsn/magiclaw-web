@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function Header({ session }: { session: Session | null }) {
     const route = useRouter();
+    console.log("session", session);
     return (
         <>
             <header className="sticky top-0 flex justify-between items-center py-6 px-4 border-b-2 border-neutral">

@@ -35,7 +35,6 @@ export default function Data() {
 
             <div className="overflow-x-auto">
                 <table className="table">
-                    {/* head */}
                     <thead>
                         <tr>
                             <th></th>
@@ -47,14 +46,13 @@ export default function Data() {
                             <th>Right Finger Force</th>
                             <th>Angle</th>
                             <th>Clips</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             records.map((record, i) => {
                                 return (
-                                    <tr key={record.uuid} className="hover">
+                                    <tr key={record.uuid} className="hover cursor-pointer">
                                         <th>{i + 1}</th>
                                         <td>{record.file.name}</td>
                                         <td>{(record.rgb!.size / 1000000).toFixed(1)}MB</td>
@@ -64,11 +62,6 @@ export default function Data() {
                                         <td>{record.r_force?.length}</td>
                                         <td>{record.angle?.length}</td>
                                         <td>{record.clips.length}</td>
-                                        <th>
-                                            <button className="btn btn-ghost underline underline-offset-2">
-                                                view & edit
-                                            </button>
-                                        </th>
                                     </tr>
                                 )
                             })
